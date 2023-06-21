@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRI</title>
+</head>
+<body>
+
+    <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
+
+    <div class="cameraContainer" id="CameraContainer">
+
+
+
+    </div>
+    
+
+    <h2 id="resultText">Escanea el código de barras</h2>
+
+
+    <button id="sendButton" style="display: none;">Send Result</button>
+    <button id="cancelButton" style="display: none;" onclick="StartQ()">Cancel</button>
+
+
+    <script>
+
+        Quagga.init({
+
+        inputStream : {
+
+            name: "Live",
+            type: "LiveStream",
+            target: document.querySelector("#CameraContainer"),
+            constraints: {
+
+                facingMode: "environment"
+
+            }
+
+        },
+
+        decoder: {
+
+        readers: ["code_128_reader", 'code_39_reader',
+                'code_39_vin_reader',
+                'upc_reader',
+                'upc_e_reader'],
+
+        multiple: false
+
+}
+
+        }, function (err) {
+
+        if (err) {
+
+            alert(err)
+            return;
+
+        }
+
+        console.log("Se ha iniciado correctamente!")
+
+        Quagga.start();
+
+        });
+
+        var resultText = document.getElementById("resultText")
+
+
+        var SendButton = document.getElementById("sendButton")
+        var CancelButton = document.getElementById("cancelButton")
+
+        // Detección de las barras.
+        Quagga.onDetected(function(result) {
+
+            console.log("sexo: " + result.codeResult.code)
+
+            var resultQR = result.codeResult.code
+            resultText.innerText = resultQR
+
+            SendButton.style.display = "flex";
+            CancelButton.style.display = "flex";
+
+
+            Quagga.pause();
+
+        })
+
+
+
+        function StartQ() {
+
+            Quagga.start();
+            
+            SendButton.style.display = "none";
+            CancelButton.style.display = "none";
+            resultText.innerText = "Escanea el código de barras"
+
+
+        }
+
+
+
+    </script>
+
+</body>
+</html>
